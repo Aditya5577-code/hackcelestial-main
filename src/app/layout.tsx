@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   title: "PRAVAAH — Mega-Event Hospitality Orchestration",
   description:
     "PRAVAAH keeps a live Stay / Move / Eat / Gather capacity ledger, then issues atomic journey contracts so different people receive different feasible paths.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/icon.svg",
+  },
 };
 
 // Serialised for the no-flash script below, which runs before React exists.
