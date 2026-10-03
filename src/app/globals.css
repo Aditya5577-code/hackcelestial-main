@@ -1,0 +1,119 @@
+@import "tailwindcss";
+@import "./texture.css";
+
+/* ============================================================
+   PRAVAAH — Coffee & Paper
+   One theme: light paper. There is deliberately no dark mode
+   and no toggle — the whole design is a printed sheet, and a
+   dark sheet is a different object. Every colour lives on
+   :root, so components never branch on a scheme.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* — paper substrate — */
+  --bg-page: #faf4ec;
+  --bg-parchment: #f2e7d8;
+  --bg-kraft: #e5d5c0;
+  --bg-well: #d8c4a9;
+
+  /* — coffee ink ramp — */
+  --ink: #241811;
+  --ink-body: #3d2a1d;
+  --ink-soft: #6b4e37;
+  --ink-muted: #9c7e5f;
+  --rule: #c6ac8f;
+
+  /* — pigments: one per ledger resource — */
+  --pig-clay: #b4552e;     /* Stay    — fired earth / matka   */
+  --pig-indigo: #35526f;   /* Move    — neel dye              */
+  --pig-turmeric: #c68b2c; /* Eat     — haldi                 */
+  --pig-tea: #4f6b4e;      /* Gather  — tea leaf / tulsi      */
+
+  /* — texture tuning (read by texture.css) — */
+  --grain-blend: multiply;
+  --grain-opacity: 0.045;
+  --laid-strength: 2.5%;
+  --vignette-strength: 10%;
+  --press-hi: rgb(255 255 255 / 0.55);
+  --bleed-strength: 7%;
+
+  /* — type indirection: the Type Lab rewrites only these — */
+  --type-display: var(--f-fraunces), Georgia, serif;
+  --type-text: var(--f-newsreader), var(--f-tiro-marathi), Georgia, serif;
+  --type-deva: var(--f-tiro-marathi), var(--f-noto-serif-deva), serif;
+
+  /* — layout — */
+  --nav-h: 3.25rem;
+}
+
+/* ── Tailwind token bridge ── */
+@theme inline {
+  --color-page: var(--bg-page);
+  --color-parchment: var(--bg-parchment);
+  --color-kraft: var(--bg-kraft);
+  --color-well: var(--bg-well);
+
+  --color-ink: var(--ink);
+  --color-ink-body: var(--ink-body);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-muted: var(--ink-muted);
+  --color-rule: var(--rule);
+
+  --color-clay: var(--pig-clay);
+  --color-indigo: var(--pig-indigo);
+  --color-turmeric: var(--pig-turmeric);
+  --color-tea: var(--pig-tea);
+
+  --font-display: var(--type-display);
+  --font-text: var(--type-text);
+  --font-deva: var(--type-deva);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--ink-body);
+  font-family: var(--type-text);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--pig-turmeric) 30%, transparent);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--pig-indigo);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── type roles ─────────────────────────────────────────────────
+   Variation settings are held per role, not globally: two roles can
+   want different opsz values from the same axis tag, and one shared
+   declaration would force them to agree. */
+
+.type-display {
+  font-family: var(--type-display);
+  font-variation-settings: var(--vset-display, normal);
+}
+
+.type-text {
+  font-family: var(--type-text);
+  font-variation-settings: var(--vset-text, normal);
+}
+
+.type-deva {
+  font-family: var(--type-deva);
+  font-variation-settings: var(--vset-deva, normal);
+}
+
+body {
+  font-variation-settings: var(--vset-text, normal);
+}

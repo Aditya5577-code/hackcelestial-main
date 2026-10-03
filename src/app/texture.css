@@ -1,0 +1,276 @@
+/* ============================================================
+   PRAVAAH — Artisan paper texture stack
+   Five layers, zero image files. Grain and vignette sit ABOVE
+   content on purpose: real grain shows over printed ink, and it
+   keeps the whole viewport reading as one continuous sheet.
+   ============================================================ */
+
+/* 1 — paper grain -------------------------------------------------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* 5 — warm edge vignette ------------------------------------------- */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    transparent 52%,
+    color-mix(in srgb, var(--ink) var(--vignette-strength), transparent) 100%
+  );
+}
+
+/* 2 — laid lines: the faint horizontals of handmade paper ---------- */
+.laid {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 3px,
+    color-mix(in srgb, var(--ink) var(--laid-strength), transparent) 3px 4px
+  );
+}
+
+/* 4 — letterpress deboss + ink bleed ------------------------------- */
+.letterpress {
+  text-shadow: 0 1px 0 var(--press-hi);
+}
+
+.ink-bleed {
+  text-shadow: 0 0 14px color-mix(in srgb, var(--ink) var(--bleed-strength), transparent);
+}
+
+.letterpress.ink-bleed {
+  text-shadow:
+    0 1px 0 var(--press-hi),
+    0 0 14px color-mix(in srgb, var(--ink) var(--bleed-strength), transparent);
+}
+
+/* ── shared motion ─────────────────────────────────────────────── */
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scaleY(0.55);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 0.95;
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── capacity strip ────────────────────────────────────────────── */
+
+.pv-seg {
+  transform-origin: bottom;
+  animation: breathe var(--dur) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pv-seg {
+    animation: none !important;
+    transform: scaleY(1);
+    opacity: 0.8;
+  }
+}
+
+/* ── rubber-stamp nav links ────────────────────────────────────── */
+
+.pv-stamp {
+  position: relative;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.pv-stamp:hover,
+.pv-stamp:focus-visible {
+  transform: rotate(-1.5deg);
+  color: var(--pig-clay);
+}
+
+.pv-stamp::after {
+  content: "";
+  position: absolute;
+  inset: -6px -10px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  opacity: 0;
+  transform: rotate(1deg) scale(0.94);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.pv-stamp:hover::after,
+.pv-stamp:focus-visible::after {
+  opacity: 0.4;
+  transform: rotate(1.4deg) scale(1);
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ── hero: the promenade plate ─────────────────────────────────
+   The artwork is an opaque JPEG painted on a cream ground very
+   close to --bg-page, so it cannot simply be dropped on the page
+   — it would read as a rectangle. `darken` keeps whichever of
+   image and backdrop is darker per channel, so once brightness()
+   lifts the artwork's own paper just *above* the page cream, that
+   paper disappears entirely and only the ink survives: a cut-out
+   with none of the alpha.
+
+   The wrapper must paint its own background and isolate itself.
+   `darken` blends against whatever is behind it, and the fixed
+   grain/vignette layers (z-index 9997/9998) must stay out of the
+   blend or the plate picks up a visible box of noise. */
+
+/* The isolation context is the whole sheet, not the image box: the
+   watermark sits behind the artwork and *should* take part in the
+   blend, while the fixed grain and vignette must not. */
+.pv-sheet {
+  isolation: isolate;
+  background-color: var(--bg-page);
+}
+
+.pv-plate img {
+  mix-blend-mode: darken;
+  filter: brightness(var(--plate-lift, 1.06)) contrast(1.02) saturate(1.06);
+
+  /* Three feathers, intersected. The left one is the important one:
+     it dissolves the artwork into the text column. The bottom feather
+     is short on purpose — it softens the strip of empty paper below
+     the painted ledger cards without eating the cards themselves,
+     which are the ledger. The right edge is left hard: it bleeds off
+     the viewport. */
+  --feather-l: linear-gradient(to right, transparent 0%, #000 24%);
+  --feather-b: linear-gradient(to top, transparent 0%, #000 7%);
+  --feather-t: linear-gradient(to bottom, transparent 0%, #000 12%);
+  -webkit-mask-image: var(--feather-l), var(--feather-b), var(--feather-t);
+  mask-image: var(--feather-l), var(--feather-b), var(--feather-t);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+}
+
+/* ── hero: the river ───────────────────────────────────────────
+   One trunk in from the viewport edge, four pigment threads out,
+   each meeting the tail of its painted counterpart in the plate.
+   Same clip-wipe reveal as the old navbar mark, and for the same
+   reason: `stroke-dasharray` in CSS parses as a *length*, so
+   pathLength normalisation never applies and threads would render
+   permanently half-drawn. */
+
+.pv-river-reveal {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  animation: grow-x 1.7s cubic-bezier(0.33, 0, 0.15, 1) both;
+  animation-delay: calc(0.3s + var(--i) * 0.14s);
+}
+
+/* Dots fade in after the trunk and out again as they reach the
+   painted trail, so the vector hands the thread to the artwork
+   rather than stopping dead at its edge. Duration matches the
+   <animateMotion> dur so fade and travel stay in phase. */
+.pv-river-dot {
+  opacity: 0;
+  animation: dot-fade var(--dur) linear infinite;
+  animation-delay: var(--delay);
+}
+
+@keyframes dot-fade {
+  0% { opacity: 0; }
+  14% { opacity: 0.9; }
+  58% { opacity: 0.9; }
+  86%, 100% { opacity: 0; }
+}
+
+/* ── hero: content entrance ────────────────────────────────────── */
+
+.pv-rise {
+  animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 0.09s);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.85rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── hero: journey contracts ───────────────────────────────────── */
+
+.pv-contract {
+  transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pv-contract:hover {
+  border-color: color-mix(in srgb, var(--pig-turmeric) 60%, transparent);
+  transform: translateY(-2px);
+}
+
+/* ── navbar: status pill and link chips ────────────────────────── */
+
+.pv-chip {
+  transition: color 0.25s ease, border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.pv-chip:hover,
+.pv-chip:focus-visible {
+  color: var(--pig-clay);
+  border-color: color-mix(in srgb, var(--pig-clay) 55%, transparent);
+  transform: rotate(-1.2deg);
+}
+
+/* The dot is the only moving thing in the navbar, and it is the only
+   claim the bar makes: this city is simulated, and it is running. */
+.pv-live {
+  animation: live-pulse 2.9s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.82); }
+  50% { opacity: 1; transform: scale(1); }
+}
