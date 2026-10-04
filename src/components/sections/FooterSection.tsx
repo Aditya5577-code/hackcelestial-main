@@ -21,20 +21,37 @@ export function FooterSection() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <a
+            href={LINKS.crowdManagement}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pv-chip type-text text-[0.62rem] uppercase tracking-[0.22em] text-ink-soft border border-rule/60 px-3.5 py-2 rounded-sm hover:border-ink hover:text-ink transition-colors"
+          >
+            Crowd Management ↗
+          </a>
+          <a
+            href={LINKS.jobPortal}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pv-chip type-text text-[0.62rem] uppercase tracking-[0.22em] text-ink-soft border border-rule/60 px-3.5 py-2 rounded-sm hover:border-ink hover:text-ink transition-colors"
+          >
+            Job Portal ↗
+          </a>
           <a
             href={LINKS.ppt}
-            className="pv-chip type-text text-[0.62rem] uppercase tracking-[0.22em] text-ink-soft border border-rule/60 px-4 py-2 rounded-sm"
+            className="pv-chip type-text text-[0.62rem] uppercase tracking-[0.22em] text-ink-soft border border-rule/60 px-3.5 py-2 rounded-sm"
           >
             Presentation (PPT)
           </a>
           <a
             href={LINKS.video}
-            className="pv-chip type-text text-[0.62rem] uppercase tracking-[0.22em] text-ink-soft border border-rule/60 px-4 py-2 rounded-sm"
+            className="pv-chip type-text text-[0.62rem] uppercase tracking-[0.22em] text-ink-soft border border-rule/60 px-3.5 py-2 rounded-sm"
           >
-            Demonstration Video
+            Video
           </a>
         </div>
+
       </div>
 
       <div className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-ink-muted type-text">

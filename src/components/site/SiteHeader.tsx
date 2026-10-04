@@ -4,9 +4,11 @@ import { CapacityStrip } from "./CapacityStrip";
 import { LINKS } from "@/lib/links";
 
 const NAV = [
+  { href: "#selected-work", label: "Selected Work" },
   { href: LINKS.ppt, label: "PPT" },
   { href: LINKS.video, label: "Video" },
 ];
+
 
 /**
  * A quiet strip, but not an empty one. It used to carry the river and a

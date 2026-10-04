@@ -3,6 +3,7 @@ import { LedgerSection } from "@/components/sections/LedgerSection";
 import { MechanismSection } from "@/components/sections/MechanismSection";
 import { ContractSimulator } from "@/components/sections/ContractSimulator";
 import { SimulatedMetrics } from "@/components/sections/SimulatedMetrics";
+import { SelectedWorkSection } from "@/components/sections/SelectedWorkSection";
 import { FooterSection } from "@/components/sections/FooterSection";
 
 export default function Home() {
@@ -13,8 +14,10 @@ export default function Home() {
       <MechanismSection />
       <ContractSimulator />
       <SimulatedMetrics />
+      <SelectedWorkSection />
       <FooterSection />
     </div>
   );
 }
+
 
